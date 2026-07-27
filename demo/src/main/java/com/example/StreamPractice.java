@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
+/** Employee model used in StreamPractice exercises. */
 class Employee {
     private String name;
     private int age;
@@ -22,25 +23,11 @@ class Employee {
         this.skills = skills;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public String getDepartment() {
-        return department;
-    }
-
-    public double getSalary() {
-        return salary;
-    }
-
-    public List<String> getSkills() {
-        return skills;
-    }
+    public String getName() { return name; }
+    public int getAge() { return age; }
+    public String getDepartment() { return department; }
+    public double getSalary() { return salary; }
+    public List<String> getSkills() { return skills; }
 
     @Override
     public String toString() {
@@ -48,6 +35,11 @@ class Employee {
     }
 }
 
+/**
+ * Comprehensive Stream API practice covering:
+ * filter, map, flatMap, distinct, sorted, max, anyMatch,
+ * groupingBy, partitioningBy, joining, and counting.
+ */
 public class StreamPractice {
     public static void main(String[] args) {
         List<Employee> employees = Arrays.asList(
@@ -58,57 +50,65 @@ public class StreamPractice {
                 new Employee("Emma", 19, "HR", 60000, Arrays.asList("Onboarding", "Excel")),
                 new Employee("Frank", 31, "Engineering", 68000, Arrays.asList("Python", "AWS")));
 
-        // Find all employees whose salary is greater than 70,000 and collect their
-        // names into a List<String>.
-        employees.stream().filter(v -> v.getSalary() > 70000)
-                .map(Employee::getName).forEach(System.out::println);
-
-        // Find the average age of all employees who have "Java" in their skills list.
-        OptionalDouble average = employees.stream().filter(v -> v.getSkills().contains("Java"))
-                .mapToInt(Employee::getAge).average();
-        if (average.isPresent()) {
-            System.out.println("Average" + average.getAsDouble());
-        }
-
-        // Get a distinct, sorted list of all department names in alphabetical order.
-        employees.stream().map(Employee::getDepartment).distinct().sorted().forEach(System.out::println);
-
-        // Find the Employee with the highest salary. (Bonus: What does this return if
-        // the list is empty?)
-        System.out.println(employees.stream().max(Comparator.comparingDouble(Employee::getSalary)).get());
-
-        // Collect a flat list of every single unique skill across the entire company.
-        employees.stream().flatMap(e -> e.getSkills().stream()).distinct().forEach(System.out::println);
-
-        // Check if there is at least one employee in the company under the age of 21.
-        System.out.println(employees.stream().anyMatch(v -> v.getAge() < 21));
-
-        // Question 7: Group employees by department and get the sum of their salaries.
-
+        // Q1: Find employees with salary > 70,000 and collect their names
         employees.stream()
-                .collect(Collectors.groupingBy(Employee::getDepartment, Collectors.summingDouble(Employee::getSalary)));
+            .filter(v -> v.getSalary() > 70000)
+            .map(Employee::getName)
+            .forEach(System.out::println);
 
-        // Question 8: Partition employees into two groups: age $\ge 30$ vs under 30.
+        // Q2: Average age of employees who have "Java" in their skills
+        OptionalDouble average = employees.stream()
+            .filter(v -> v.getSkills().contains("Java"))
+            .mapToInt(Employee::getAge)
+            .average();
+        average.ifPresent(avg -> System.out.println("Average age (Java devs): " + avg));
 
-        Map<Boolean, List<Employee>> collect = employees.stream()
-                .collect(Collectors.partitioningBy(e -> e.getAge() >= 30));
-        collect.entrySet().stream().forEach(entry -> {
-            System.out.println(entry.getKey() + "->" + entry.getValue());
-        });
-
-        // Question 9: Create a single comma-separated string of all names, sorted
-        // alphabetically.
-        employees.stream().map(Employee::getName).sorted().collect(Collectors.joining(", "));
-
-        // Question 10: Find the single most common skill.
-
+        // Q3: Distinct, sorted list of all department names (alphabetical)
         employees.stream()
-                .flatMap(e -> e.getSkills().stream())
-                .collect(Collectors.groupingBy(skill -> skill, Collectors.counting()))
-                .entrySet()
-                .stream()
-                .min(Map.Entry.comparingByValue())
-                .map(Map.Entry::getValue)
-                .orElse(0L);
+            .map(Employee::getDepartment)
+            .distinct()
+            .sorted()
+            .forEach(System.out::println);
+
+        // Q4: Employee with the highest salary (returns Optional)
+        employees.stream()
+            .max(Comparator.comparingDouble(Employee::getSalary))
+            .ifPresent(System.out::println);
+
+        // Q5: Flat list of every unique skill across the company
+        employees.stream()
+            .flatMap(e -> e.getSkills().stream())
+            .distinct()
+            .forEach(System.out::println);
+
+        // Q6: Check if at least one employee is under 21
+        System.out.println("Any employee under 21? " + employees.stream().anyMatch(v -> v.getAge() < 21));
+
+        // Q7: Group employees by department and sum their salaries
+        employees.stream()
+            .collect(Collectors.groupingBy(
+                Employee::getDepartment,
+                Collectors.summingDouble(Employee::getSalary)
+            ));
+
+        // Q8: Partition employees into age >= 30 vs under 30
+        Map<Boolean, List<Employee>> partitioned = employees.stream()
+            .collect(Collectors.partitioningBy(e -> e.getAge() >= 30));
+        partitioned.forEach((key, value) -> System.out.println(key + " -> " + value));
+
+        // Q9: Comma-separated string of all names, sorted alphabetically
+        String namesCsv = employees.stream()
+            .map(Employee::getName)
+            .sorted()
+            .collect(Collectors.joining(", "));
+        System.out.println(namesCsv);
+
+        // Q10: Find the most common skill
+        employees.stream()
+            .flatMap(e -> e.getSkills().stream())
+            .collect(Collectors.groupingBy(skill -> skill, Collectors.counting()))
+            .entrySet().stream()
+            .max(Map.Entry.comparingByValue())
+            .ifPresent(entry -> System.out.println("Most common skill: " + entry.getKey() + " (" + entry.getValue() + ")"));
     }
 }

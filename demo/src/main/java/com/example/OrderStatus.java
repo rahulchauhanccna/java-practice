@@ -2,6 +2,8 @@ package com.example;
 
 /**
  * OrderStatus enum for e-commerce order processing.
+ * Represents the lifecycle states of an order:
+ * PENDING → SHIPPED → DELIVERED, or CANCELLED at any point.
  */
 public enum OrderStatus {
     PENDING("PENDING"),
@@ -19,6 +21,7 @@ public enum OrderStatus {
         return this.value;
     }
 
+    /** Case-insensitive lookup from a string. Throws IllegalArgumentException if not found. */
     public static OrderStatus fromString(String text) {
         for (OrderStatus status : OrderStatus.values()) {
             if (status.value.equalsIgnoreCase(text)) {

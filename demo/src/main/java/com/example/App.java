@@ -5,8 +5,9 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
- * Hello world!
- *
+ * Simple app that reads space-separated integers from stdin,
+ * then finds and prints the first element of the array.
+ * Demonstrates basic Stream & IntStream usage.
  */
 public class App 
 {
@@ -14,12 +15,13 @@ public class App
     {
         final Scanner sc = new Scanner(System.in);
         System.out.println("Enter space-separated integers:");
-        final int arr[] = Stream.of(sc.nextLine().trim().split(" "))
-                .mapToInt(Integer::parseInt)
-                .toArray();
-        //IntStream.range(0, arr.length).filter(v-> v % 2 == 0).forEach(i -> System.out.println(arr[i]));
 
+        // ---- Read line, split by spaces, parse each token as int, collect into int[] ----
+        final int arr[] = Stream.of(sc.nextLine().trim().split(" "))
+                .mapToInt(Integer::parseInt)   // String -> int via Integer.parseInt
+                .toArray();                     // terminal operation: produces int[]
+
+        // ---- Find the first element (index 0) and print it (if present) ----
         IntStream.range(0, arr.length).findFirst().ifPresent(System.out::println);
-        
     }
 }

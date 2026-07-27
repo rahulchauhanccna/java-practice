@@ -2,6 +2,14 @@ package com.example.future;
 
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Challenge 4: Race two data sources with applyToEither.
+ * Queries primary and secondary DBs simultaneously; takes whichever completes FIRST
+ * and transforms the result to uppercase.
+ * 
+ * 📘 applyToEither: takes the result of the FIRST future to complete
+ *   (primary or secondary) and applies a function to it.
+ */
 public class Challenge4 {
 
     public static CompletableFuture<String> fetchFromPrimaryDb(String userId) {
@@ -24,13 +32,11 @@ public class Challenge4 {
         CompletableFuture<String> primaryFuture = fetchFromPrimaryDb(userId);
         CompletableFuture<String> secondaryFuture = fetchFromSecondaryDb(userId);
 
+        // Take whichever completes first and transform to uppercase
         CompletableFuture<String> winnerFuture = primaryFuture
-        .applyToEither(secondaryFuture, (v)-> v.toUpperCase())
-            // TODO: Use applyToEither to take whichever completes first 
-            // (primary or secondary) and transform the resulting string to UPPERCASE
-            ;
+            .applyToEither(secondaryFuture, String::toUpperCase);
 
-        // Output should print: DATA_FROM_SECONDARY
+        // Output should print: DATA_FROM_SECONDARY (secondary is faster)
         System.out.println(winnerFuture.join());
     }
 }

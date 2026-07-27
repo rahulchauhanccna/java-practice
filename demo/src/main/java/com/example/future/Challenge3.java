@@ -3,6 +3,14 @@ package com.example.future;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Challenge 3: Combining two independent futures with thenCombine.
+ * Fetches a user's role AND permissions independently, then combines them
+ * into a single UserAccessProfile.
+ * 
+ * 📘 thenCombine: merges the results of TWO independent CompletableFutures
+ *   using a BiFunction when both complete.
+ */
 public class Challenge3 {
 
     public record UserAccessProfile(String role, List<String> permissions) {}
@@ -22,7 +30,7 @@ public class Challenge3 {
         CompletableFuture<List<String>> permsFuture = fetchUserPermissions(userId);
 
         CompletableFuture<UserAccessProfile> profileFuture = roleFuture
-        .thenCombine(permsFuture,(u,perm)-> new UserAccessProfile(u, perm));
+            .thenCombine(permsFuture, (role, perms) -> new UserAccessProfile(role, perms));
 
         // Output should print: UserAccessProfile[role=ADMIN, permissions=[READ, WRITE, DELETE]]
         System.out.println(profileFuture.join());

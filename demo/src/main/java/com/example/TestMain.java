@@ -9,67 +9,35 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Scratchpad / test class for various Stream API and MinStack experiments.
+ * Contains commented-out examples for list intersection, difference, merge,
+ * user-order join, and distinct-by-key filtering.
+ */
 public class TestMain {
 
-        public static void main(String[] args) {
-                // System.out.println("Hello, World!");
+    public static void main(String[] args) {
+        // ---- MinStack demo ----
+        MinStack obj = new MinStack();
+        obj.push(-2);
+        obj.push(0);
+        obj.push(-3);
+        obj.getMin();   // Returns -3
+        obj.pop();
+        obj.top();      // Returns 0
+        obj.getMin();   // Returns -2
+        int param_3 = obj.top();
+        int param_4 = obj.getMin();
+    }
 
-                // List<String> listA = List.of("Apple", "Banana", "Cherry");
-                // List<String> listB = List.of("Banana", "Cherry", "Dragonfruit");
-                // Set<String> setA = new HashSet<>(listA);
-
-                // // find the common elements (Intersection) between two lists
-                // listB.stream().filter(setA::contains)
-                //                 .forEach(System.out::println);
-
-                // // find elements present in List A but NOT in List B (Difference)
-                // System.out.println("Elements present in List A but NOT in List B:");
-                // listA.stream().filter(v -> !listB.contains(v))
-                //                 .forEach(System.out::println);
-
-                // // merge two lists of objects and remove duplicates based on a specific property
-                // System.out.println("Merged list with duplicates removed:");
-                // Stream.concat(listA.stream(), listB.stream())
-                //                 .distinct()
-                //                 .forEach(System.out::println);
-
-                // // INIT
-                // List<User> users = List.of(new User(1, "Alice"), new User(2, "Bob"), new User(1, "Rahul"));
-                // List<Order> orders = List.of(new Order(101, 1, "Laptop"), new Order(102, 2, "Phone"));
-
-                // // Join users and orders based on userId
-                // System.out.println("Joined Users and Orders:");
-                // orders.stream()
-                //                 .collect(Collectors.toMap(Order::getUserId, order -> order)).forEach((k, v) -> {
-                //                         System.out.println(k + "-->" + v.getProduct());
-                //                 });
-
-                // System.out.println("Priting DTO ");
-                // // users.stream().map(user -> new UserOrderDTO(user, orderMap.get(user.getId())))
-                // //                 .forEach(System.out::println);
-
-                // System.out.println("distintByKey");
-                // // distintByKey
-                // users.stream().filter(distintByKey(User::getId)).forEach(System.out::println);
-
-        
-             
-                // * Your MinStack object will be instantiated and called as such:
-                 MinStack obj = new MinStack();
-                  obj.push(-2);
-                  obj.push(0);
-                  obj.push(-3);
-                  obj.getMin();
-                  obj.pop();
-                  obj.top();
-                  obj.getMin();
-                 int param_3 = obj.top();
-                  int param_4 = obj.getMin();
-                 
-        }
-
-        public static <T> Predicate<T> distintByKey(Function<? super T, ?> keyExtractor) {
-                Set<Object> seen = ConcurrentHashMap.newKeySet();
-                return t -> seen.add(keyExtractor.apply(t));
-        }
+    /**
+     * Generic distinct-by-key filter for streams.
+     * Uses ConcurrentHashMap.newKeySet() for thread-safe deduplication.
+     * 
+     * Example: users.stream().filter(distinctByKey(User::getId))
+     */
+    public static <T> Predicate<T> distinctByKey(Function<? super T, ?> keyExtractor) {
+        Set<Object> seen = ConcurrentHashMap.newKeySet();
+        return t -> seen.add(keyExtractor.apply(t));
+    }
 }
